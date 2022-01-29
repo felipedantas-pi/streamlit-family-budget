@@ -112,6 +112,7 @@ with st.expander("Filtros de Categorias", expanded = True):
 
 meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 meses_n = list(range(1,13))
+# cria um dict name:number dos mes
 meses_dict = {meses_nm[i]: meses_n[i] for i in range(len(meses_nm))}
 
 
