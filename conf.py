@@ -37,3 +37,47 @@ def load_dataset():
     #conf_variable.rename(lowercase, axis='columns', inplace=True)
 
     return receitas, despesas, cartoes_de_credito, conf_variable
+
+
+@st.cache
+def nm_banco_cc():
+
+    # Carrega o dataset com a configuração de Bancos e Cartão de Crédito
+    df = load_dataset()[3]
+
+    # Seleciona a coluna de banco e criar um lista de valores
+    banco_name = df['Bancos'].dropna().tolist()
+
+    # Seleciona a colina de Cartão de Crédito e exporta para lista
+    cardCredit_name = df['Cartão de Crédito'].dropna().tolist()
+
+    return banco_name, cardCredit_name
+
+
+@st.cache
+def categorias_conf():
+
+    # Carrega o dataset com a configuração de despesas
+    df = load_dataset()[3]
+
+    # Obtem a lista de categorias das receitas
+    cat_receitas = sorted(df['Receita'].dropna().tolist())
+
+    # Obtem a lista de categorais das despesas
+    cat_despesa = sorted(df['Despesa'].dropna().tolist())
+    # Gera um lista de despesas pelos nomes das colunas das subdespesas
+    #cat_despesa = df.columns.tolist()[3:]
+
+    # Inicializa com um dicionário vázio
+    subcat_despesa = {}
+
+    # Aqui utilizo um dictionary comprehension para adicionar 
+    # as Keys com os nomes do cabeçalho do dataframe
+    # e criar um lista de subcategorias por categoria
+    subcat_despesa = {new_list: None for new_list in cat_despesa}
+
+    # Aqui 
+    for c in cat_despesa:
+        subcat_despesa[c] = df[c].dropna().tolist()
+    
+    return cat_receitas, cat_despesa, subcat_despesa
