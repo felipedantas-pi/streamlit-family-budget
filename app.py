@@ -59,3 +59,61 @@ select_dataset = st.sidebar.selectbox(
 )
 
 
+with st.expander("Filtros de Categorias", expanded = True):
+
+    row1col1, row1col2, row1col3 = st.columns(3)
+    ## Habilita as caixas de seleções de acordo com o dataset escolhido
+    if select_dataset == datasets_names[0]: # Receitas
+        with row1col1:
+
+            options_bank = st.multiselect(
+                label = 'Conta bancária',
+                options = nm_banco,
+                default = None
+            )
+
+        with row1col2:
+
+            options_cat_receitas = st.multiselect(
+                label = 'Categorias de Receitas',
+                options = cat_receita,
+                #options = receitas['FONTE DE RENDA'].unique(),
+                default = None
+            )
+
+    elif select_dataset == datasets_names[1]: # Despesas
+        with row1col1:
+
+            options_bank = st.multiselect(
+                label = 'Conta bancária',
+                options = nm_banco,
+                default = None
+            )
+
+        with row1col2:
+
+            options_despesa = st.selectbox(
+                label = 'Categoria de Despesa',
+                options = [''] + sorted(cat_despesa),
+                #default = None,
+                key='name_cat_despesa'
+            )
+
+        if len(options_despesa) > 0:
+            with row1col3:
+                    
+                 options_subdespesa = st.selectbox(
+                    "Subcategoria da despesa selecionada",
+                    options = subcat_despesa[options_despesa],
+                    #default = None
+                )
+
+    elif select_dataset == datasets_names[2]: # Cartão de Crédito
+        # colocar aqui informações do cartao de credito que usara, 
+        # provavelmente 3 colunas
+        pass
+    else:
+        # colocar aqui um dashboar geral ou não
+        pass
+
+
