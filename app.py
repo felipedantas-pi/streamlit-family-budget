@@ -38,14 +38,6 @@ cat_receita, cat_despesa, subcat_despesa = categorias_conf() # retorna uma lista
 # Metricas
 container1 = st.container()
 
-def valor_total_por_mes(dataframe:str, mes:int):
-    """ 
-    Calcula o valor total de um mês de acordo com o dataframe escolhido
-    input: nome do dataframe: str, mês: int
-    output: numpy.float64
-    """
-    return dataframe[dataframe['DATA'].dt.month == mes]['VALOR REAL'].sum() # retorna uma float64
-
 ## Lista de nomes dos datasets para ser passado a função load_dataset()
 #datasets_names = ['','Receitas','Despesas','Cartão de Crédito']
 datasets_names = ['receitas','despesas','cartões de crédito']
@@ -116,4 +108,103 @@ with st.expander("Filtros de Categorias", expanded = True):
         # colocar aqui um dashboar geral ou não
         pass
 
+
+meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+meses_n = list(range(1,13))
+meses_dict = {meses_nm[i]: meses_n[i] for i in range(len(meses_nm))}
+
+
+with st.sidebar.expander("FILTRO MENSAL", expanded=True):
+
+    all = st.checkbox("Selecione todos os meses")
+
+    if all:
+        meses_options = st.multiselect(
+            "Selecione uma mês:", 
+            [*meses_nm], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
+            [*meses_nm])
+    else:
+        meses_options =  st.selectbox(
+            "Selecione uma mês:",
+            [*meses_nm],
+            index=0)
+
+
+def valor_total_por_mes(dataframe:str, mes:int):
+    """ 
+    Calcula o valor total de um mês de acordo com o dataframe escolhido
+    input: nome do dataframe: str, mês: int
+    output: numpy.float64
+    """
+    return dataframe[dataframe['DATA'].dt.month == mes]['VALOR REAL'].sum() # retorna uma float64
+
+
+def values_metric(mes:str):
+    """
+    """
+    row1, row2, row3 = container1.columns(3)
+
+    recebido = round(valor_total_por_mes(receitas, meses_dict[meses_options]), 2)
+    gastado = round(valor_total_por_mes(despesas, meses_dict[meses_options]), 2)
+    saldo = round(recebido - gastado, 2)
+
+    with row1:
+        st.metric('Quanto Recebi', value = recebido)
+    with row2:
+        st.metric('Quanto Gastei', value = gastado)
+    with row3:
+        st.metric('Saldo', value = saldo)
+
+
+if all:
+    st.markdown(''' ### definir um estado para quando apagar o multiselect ele voltar ao valor padrão que seria o mês atual ''')
+    row1, row2, row3 = container1.columns(3)
+
+    recebido = round(receitas['VALOR REAL'].sum(), 2) # 96.871,93
+    gastado = round(despesas['VALOR REAL'].sum(), 2) # 97.055,98
+    saldo = round(recebido - gastado, 2) # -184,05
+
+    with row1:
+        st.metric('Quanto Recebi', value = recebido)
+    with row2:
+        st.metric('Quanto Gastei', value = gastado)
+    with row3:
+        st.metric('Saldo', value = saldo)
+
+
+if meses_options == 'JAN':
+    values_metric(meses_options)
+
+if meses_options == 'FEV':
+    values_metric(meses_options)
+
+if meses_options == 'MAR':
+    values_metric(meses_options)
+
+if meses_options == 'ABR':
+    values_metric(meses_options)
+
+if meses_options == 'MAI':
+    values_metric(meses_options)
+
+if meses_options == 'JUN':
+    values_metric(meses_options)
+
+if meses_options == 'JUL':
+    values_metric(meses_options)
+
+if meses_options == 'AGO':
+    values_metric(meses_options)
+
+if meses_options == 'SET':
+    values_metric(meses_options)
+
+if meses_options == 'OUT':
+    values_metric(meses_options)
+
+if meses_options == 'NOV':
+    values_metric(meses_options)
+
+if meses_options == 'DEZ':
+    values_metric(meses_options)
 
