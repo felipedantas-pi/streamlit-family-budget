@@ -5,10 +5,11 @@ st.set_page_config(
     page_icon = "🖖",
     layout ="wide",
     initial_sidebar_state = "collapsed",
-    menu_items =    {
-        'Get Help': '',
-        'Report a bug': "h",
-        'About': "# This is a header. This is an *extremely* cool app!"})
+    #menu_items =    {
+    #    'Get Help': 'COLOCAR URL VALIDA',
+    #    'Report a bug': "COLOCAR URL VALIDA",
+    #    'About': "# This is a header. This is an *extremely* cool app!"}
+)
 
 from html_app import html_set
 html_set() # Carrega o html 
