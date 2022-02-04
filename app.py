@@ -43,6 +43,28 @@ container1 = st.container()
 #datasets_names = ['','Receitas','Despesas','Cartão de Crédito']
 datasets_names = ['receitas','despesas','cartões de crédito']
 
+meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+meses_n = list(range(1,13))
+# cria um dict name:number dos mes
+meses_dict = {meses_nm[i]: meses_n[i] for i in range(len(meses_nm))}
+
+
+with st.sidebar.expander("FILTRO MENSAL", expanded=True):
+
+    all = st.checkbox("Selecione todos os meses")
+
+    if all:
+        meses_options = st.multiselect(
+            "Selecione uma mês:", 
+            [*meses_nm], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
+            [*meses_nm])
+    else:
+        meses_options =  st.selectbox(
+            "Selecione uma mês:",
+            [*meses_nm],
+            index=0)
+            
+
 ## Criando um selectbox para Definindo as opções de dataset
 select_dataset = st.sidebar.selectbox(
   label = 'ESCOLHA UM DATASET',
@@ -50,7 +72,6 @@ select_dataset = st.sidebar.selectbox(
   index = 0,
   format_func = lambda s: s.title()
 )
-
 
 with st.expander("Filtros de Categorias", expanded = True):
 
@@ -108,28 +129,6 @@ with st.expander("Filtros de Categorias", expanded = True):
     else:
         # colocar aqui um dashboar geral ou não
         pass
-
-
-meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-meses_n = list(range(1,13))
-# cria um dict name:number dos mes
-meses_dict = {meses_nm[i]: meses_n[i] for i in range(len(meses_nm))}
-
-
-with st.sidebar.expander("FILTRO MENSAL", expanded=True):
-
-    all = st.checkbox("Selecione todos os meses")
-
-    if all:
-        meses_options = st.multiselect(
-            "Selecione uma mês:", 
-            [*meses_nm], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
-            [*meses_nm])
-    else:
-        meses_options =  st.selectbox(
-            "Selecione uma mês:",
-            [*meses_nm],
-            index=0)
 
 
 def valor_total_por_mes(dataframe:str, mes:int):
