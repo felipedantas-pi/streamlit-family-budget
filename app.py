@@ -46,8 +46,15 @@ datasets_names = ['receitas','despesas','cartões de crédito']
 meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 meses_n = list(range(1,13))
 # cria um dict name:number dos mes
-meses_dict = {meses_nm[i]: meses_n[i] for i in range(len(meses_nm))}
+meses_dict = {meses_n[i]: meses_nm[i] for i in range(len(meses_n))}
 
+#data_atual = date.today()
+
+#meses_dict
+#st.write(meses_dict[mes_atual])
+
+def mes_atual():
+    return date.today().month
 
 with st.sidebar.expander("FILTRO MENSAL", expanded=True):
 
