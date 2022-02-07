@@ -1,5 +1,17 @@
 import streamlit as st
 
+# Cnfiguração da página
+st.set_page_config(
+    page_title = 'Finanças Familiar',
+    page_icon = "🖖",
+    layout ="wide",
+    initial_sidebar_state = "auto", # auto, expanded or collapsed
+    #menu_items =    {
+    #    'Get Help': 'COLOCAR URL VALIDA',
+    #    'Report a bug': "COLOCAR URL VALIDA",
+    #    'About': "# This is a header. This is an *extremely* cool app!"}
+)
+
 # Usando HTML para renderizar o título
 # Esconde o icône de hamburgue do streamlit
 def html_set():
