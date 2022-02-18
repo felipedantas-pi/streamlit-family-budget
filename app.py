@@ -2,46 +2,35 @@ import streamlit as st
 from html_app import html_set
 html_set() # Carrega o html e configurações da page
 
-from conf import load_all_datasets, load_dataset, nm_banco_cc, categorias_conf
-
 import pandas as pd
 from datetime import date
 from millify import millify # Converta números longos em um formato legível em Python
 
+from conf import load_all_datasets, load_dataset, nm_banco_cc, categorias_conf
+from func import dict_mes, mes_int2str, valor_total_por_mes
 
-#st.write(load_all_datasets())
+import seaborn as sns
+import matplotlib.pyplot as plt
+#sns.set_theme(style="ticks", color_codes=True)
+#import plots
 
-# Carrega os datasets na memória
 receitas, despesas, cartao_credito = load_dataset()[:3] # retorna um dataframe
-
-#Carrega as lista de bancos e cartão de crédito
 nm_banco, nm_cartao_credito = nm_banco_cc() # retorna uma lista
-
-# Carrega as listas de bancos, cartões de crédito, 
-# categorias de receitas e despesas.
 cat_receita, cat_despesa, subcat_despesa = categorias_conf() # retorna uma lista
 
 # Metricas
 container1 = st.container()
+
+# Sidebar
 container1side = st.sidebar.container()
 container2side = st.sidebar.container()
 
-## Lista de nomes dos datasets para ser passado a função load_dataset()
-#datasets_names = ['','Receitas','Despesas','Cartão de Crédito']
+# Lista de nomes dos datasets para ser passado a função load_dataset()
 datasets_names = ['receitas', 'despesas', 'cartões de crédito']
 
-meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-meses_n = list(range(1,13))
-# cria um dict {"1":"JAN", "2":"FEV", ...}
-meses_dict = {meses_n[i]: meses_nm[i] for i in range(len(meses_n))}
-
-def mes_int2str():
-    """
-    """
-    mes_now = date.today().month # int
-    idx = mes_now - 1
-    return (mes_now, idx, meses_dict[mes_now]) # returna o valor:str da chave:int
-
+#meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+#meses_n = list(range(1,13))
+#meses_dict = {meses_n[i]: meses_nm[i] for i in range(len(meses_n))} # dict {"1":"JAN", ...}
 
 with container1side.expander("FILTRO MENSAL", expanded=True):
 
@@ -50,52 +39,22 @@ with container1side.expander("FILTRO MENSAL", expanded=True):
     if all:
         meses_options = st.multiselect(
             "Selecione uma mês:", 
-            [*meses_dict], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
-            [*meses_dict],
-            format_func = lambda m: meses_dict[m])
+            [*dict_mes()], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
+            [*dict_mes()],
+            format_func = lambda m: dict_mes()[m])
     else:
         meses_options =  st.selectbox(
             "Selecione uma mês:",
-            [*meses_dict], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
-            index = mes_int2str()[1],
-            format_func = lambda m: meses_dict[m])
-
-def valor_total_por_mes(dataset:str, mes:int):
-    """ 
-    Calcula o valor total de um mês de acordo com o dataframe escolhido
-    input: nome do dataframe: str, mês: int
-    output: numpy.float64
-    """
-    return dataset[dataset['DATA'].dt.month == mes]['VALOR REAL'].sum() # retorna uma float64
-
-
-def values_metric(mes:int):
-    """
-    """
-    
-    row1, row2, row3 = container1.columns(3)
-
-    nm_mes = meses_dict[mes] # nome do mês Ex: 'JAN'
-    mesk_str = {y:x for x,y in meses_dict.items()} # troca key:value 
-
-    recebido = round(valor_total_por_mes(receitas, mesk_str[nm_mes]), 2)
-    gastado = round(valor_total_por_mes(despesas, mesk_str[nm_mes]), 2)
-    saldo = round(recebido - gastado, 2)
-
-    with row1:
-        st.metric('Quanto Recebi', value = recebido)
-    with row2:
-        st.metric('Quanto Gastei', value = gastado)
-    with row3:
-        st.metric('Saldo', value = saldo)
+            [*dict_mes()], #Intera sobre as chaves e retorna uma lista sem precisa do .keys()
+            index = mes_int2str()[0] - 1,
+            format_func = lambda m: dict_mes()[m])
 
 ## Criando um selectbox para Definindo as opções de dataset
 select_dataset = container2side.selectbox(
     label = 'ESCOLHA UM DATASET',
     options = datasets_names,
     index = 0,
-    format_func = lambda s: s.title()
-)
+    format_func = lambda s: s.title())
 
 with st.expander("Filtros de Categorias", expanded = True):
 
@@ -155,6 +114,27 @@ with st.expander("Filtros de Categorias", expanded = True):
         # colocar aqui um dashboar geral ou não
         pass
 
+def values_metric(mes:int):
+    """
+    """
+    row1, row2, row3 = container1.columns(3)
+
+    nm_mes = dict_mes()[mes] # Valor da key: 'JAN' 
+    mesk_str = {y:x for x,y in dict_mes().items()} # troca key:value 
+
+    recebido = round(valor_total_por_mes(receitas, mesk_str[nm_mes])[1], 2) 
+    gastado = round(valor_total_por_mes(despesas, mesk_str[nm_mes])[1], 2)
+    saldo = round(recebido - gastado, 2)
+
+    with row1:
+        st.metric('Quanto Recebi', value = recebido)
+    with row2:
+        st.metric('Quanto Gastei', value = gastado)
+    with row3:
+        st.metric('Saldo', value = saldo)
+
+    st.dataframe(valor_total_por_mes(receitas, mesk_str[nm_mes])[0])
+
 
 # Criar o container1 com os valores recebidos, gastados e saldo
 if all:
@@ -175,3 +155,13 @@ else:
     values_metric(meses_options)
 
 
+
+
+
+# f1 = (receitas['CONTA'].isin(options_bank))
+# f2 = (receitas['FONTE DE RENDA'].isin(options_categorias_receitas))
+# receitas.loc(filter1)
+
+# f1 = (receitas["DATA"] >= pd.to_datetime(start_date)) & (receitas["DATA"] <= pd.to_datetime(end_date))
+# f2 = (receitas['CONTA'].isin(options_bank))
+# f3 = (receitas['FONTE DE RENDA'].isin(options_categorias_receitas))
