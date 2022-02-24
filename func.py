@@ -11,6 +11,7 @@ def dict_mes():
 def mes_int2str():
 
     from datetime import date
+    
     num_mes_now = date.today().month # int
 
     return (num_mes_now, dict_mes()[num_mes_now])
@@ -36,15 +37,6 @@ def valor_total_por_mes(dataset, mes:int, **columns_df):
         mes_soma = df['VALOR REAL'].sum() # somatório
 
     return df, mes_soma # retorna uma float64
-
-
-receita_contas
-receita_contas.loc[receita_contas['FONTE DE RENDA'].isin(options_cat_receitas)]
-
-# f1 = (receitas["DATA"] >= pd.to_datetime(start_date)) & (receitas["DATA"] <= pd.to_datetime(end_date))
-# f2 = (receitas['CONTA'].isin(options_bank))
-# f3 = (receitas['FONTE DE RENDA'].isin(options_categorias_receitas))
-
 
 
 def values_metric(mes:int):
