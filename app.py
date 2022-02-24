@@ -1,7 +1,7 @@
-import streamlit as st
 from html_app import html_set
 html_set() # Carrega o html e configurações da page
 
+import streamlit as st
 import pandas as pd
 from datetime import date
 from millify import millify # Converta números longos em um formato legível em Python
@@ -20,18 +20,20 @@ cat_receita, cat_despesa, subcat_despesa = categorias_conf() # retorna uma lista
 
 # Metricas
 container1 = st.container()
+container2 = st.container()
+container3 = st.container()
 
 # Sidebar
 container1side = st.sidebar.container()
 container2side = st.sidebar.container()
 
-# Lista de nomes dos datasets para ser passado a função load_dataset()
-datasets_names = ['receitas', 'despesas', 'cartões de crédito']
-
 #meses_nm = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 #meses_n = list(range(1,13))
 #meses_dict = {meses_n[i]: meses_nm[i] for i in range(len(meses_n))} # dict {"1":"JAN", ...}
 
+# CRIANDO FILTROS
+
+## Temporal
 with container1side.expander("FILTRO MENSAL", expanded=True):
 
     all = st.checkbox("Selecione todos os meses")
@@ -49,26 +51,33 @@ with container1side.expander("FILTRO MENSAL", expanded=True):
             index = mes_int2str()[0] - 1,
             format_func = lambda m: dict_mes()[m])
 
-## Criando um selectbox para Definindo as opções de dataset
+## Datasets
+datasets_names = ['receitas', 'despesas', 'cartões de crédito']
+
 select_dataset = container2side.selectbox(
     label = 'ESCOLHA UM DATASET',
     options = datasets_names,
     index = 0,
     format_func = lambda s: s.title())
 
-with st.expander("Filtros de Categorias", expanded = True):
+## Filtros de acordo com o dataset selecionado
+with container2.expander("Filtros de Categorias", expanded = True):
 
     row1col1, row1col2 = st.columns(2)
 
-    ## Habilita as caixas de seleções de acordo com o dataset escolhido
-    if select_dataset == datasets_names[0]: # Receitas
+    if select_dataset == datasets_names[0]: # receitas
         with row1col1:
 
             options_bank = st.multiselect(
-                label = 'Conta bancária',
+                label = 'Contas bancárias',
                 options = nm_banco,
                 default = None
             )
+        
+        filter_bank = receitas['CONTA'].isin(options_bank)
+        receita_filter_bank = receitas.loc[:, filter_bank]
+        st.dataframe(receita_filter_bank)
+        
 
         with row1col2:
 
@@ -79,7 +88,7 @@ with st.expander("Filtros de Categorias", expanded = True):
                 default = None
             )
 
-    elif select_dataset == datasets_names[1]: # Despesas
+    elif select_dataset == datasets_names[1]: # despesas
         with row1col1:
 
             options_bank = st.multiselect(
@@ -90,23 +99,24 @@ with st.expander("Filtros de Categorias", expanded = True):
 
         with row1col2:
 
-            options_despesa = st.selectbox(
+            options_cat_despesas = st.selectbox(
                 label = 'Categoria de Despesa',
                 options = [''] + sorted(cat_despesa),
                 #default = None,
                 key='name_cat_despesa'
             )
 
-        if len(options_despesa) > 0:
-            with row1col1:
-                    
-                 options_subdespesa = st.selectbox(
-                    "Subcategoria da despesa selecionada",
-                    options = subcat_despesa[options_despesa],
-                    #default = None
-                )
+            if len(options_cat_despesas) > 0:
+                with row1col2:
+                        
+                    options_subcat_despesas = st.selectbox(
+                        "Subcategoria da despesa selecionada",
+                        options = subcat_despesa[options_cat_despesas],
+                        #default = None
+                    )
 
-    elif select_dataset == datasets_names[2]: # Cartão de Crédito
+    elif select_dataset == datasets_names[2]: # cartão de credito
+        st.warning("Implementado em andamento")
         # colocar aqui informações do cartao de credito que usara, 
         # provavelmente 3 colunas
         pass
