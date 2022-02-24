@@ -7,3 +7,6 @@ __pycache__/
 database/
 examples/
 old_files/
+
+# Files
+*.yml
