@@ -75,9 +75,7 @@ with container2.expander("Filtros de Categorias", expanded = True):
             )
         
         filter_bank = receitas['CONTA'].isin(options_bank)
-        receita_filter_bank = receitas.loc[:, filter_bank]
-        st.dataframe(receita_filter_bank)
-        
+        receita_filter_bank = receitas.loc[filter_bank]
 
         with row1col2:
 
@@ -87,6 +85,9 @@ with container2.expander("Filtros de Categorias", expanded = True):
                 #options = receitas['FONTE DE RENDA'].unique(),
                 default = None
             )
+        
+        filter_cat_receita = receitas['FONTE DE RENDA'].isin(options_cat_receitas)
+        receita_filter_catrec = receitas.loc[filter_cat_receita]
 
     elif select_dataset == datasets_names[1]: # despesas
         with row1col1:
@@ -124,7 +125,15 @@ with container2.expander("Filtros de Categorias", expanded = True):
         # colocar aqui um dashboar geral ou não
         pass
 
-def values_metric(mes:int):
+if len(options_bank) > 0 and len(options_cat_receitas) == 0:
+    filter_bank = receitas['CONTA'].isin(options_bank)
+    receita_filter_bank = receitas.loc[filter_bank]
+    receita_filter_bank
+
+filter_cat_receita = receitas['FONTE DE RENDA'].isin(options_cat_receitas)
+receita_filter_catrec = receitas.loc[filter_cat_receita]
+
+def values_metric(mes:int, **kwargs):
     """
     """
     row1, row2, row3 = container1.columns(3)

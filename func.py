@@ -26,8 +26,8 @@ def valor_total_por_mes(dataset, mes:int, **columns_df):
     import streamlit as st
     import pandas as pd
 
-    bank_selected = columns_df.get('bank')
-    cat_receita_sel = columns_df.get('categoria_receita')
+    options_bank = columns_df.get('options_bank')
+    options_cat_receitas = columns_df.get('options_cat_receia')
 
     if mes is None:
         st.write("Nenhum mes especificado")
@@ -39,25 +39,25 @@ def valor_total_por_mes(dataset, mes:int, **columns_df):
     return df, mes_soma # retorna uma float64
 
 
-def values_metric(mes:int):
-    """
-    """
-    row1, row2, row3 = container1.columns(3)
+# def values_metric(mes:int):
+#     """
+#     """
+#     row1, row2, row3 = container1.columns(3)
 
-    nm_mes = dict_mes()[mes] # Valor da key: 'JAN' 
-    mesk_str = {y:x for x,y in dict_mes().items()} # troca key:value 
+#     nm_mes = dict_mes()[mes] # Valor da key: 'JAN' 
+#     mesk_str = {y:x for x,y in dict_mes().items()} # troca key:value 
 
-    recebido = round(valor_total_por_mes(receitas, mesk_str[nm_mes])[1], 2) 
-    gastado = round(valor_total_por_mes(despesas, mesk_str[nm_mes])[1], 2)
-    saldo = round(recebido - gastado, 2)
+#     recebido = round(valor_total_por_mes(receitas, mesk_str[nm_mes])[1], 2) 
+#     gastado = round(valor_total_por_mes(despesas, mesk_str[nm_mes])[1], 2)
+#     saldo = round(recebido - gastado, 2)
 
-    with row1:
-        st.metric('Quanto Recebi', value = recebido)
-    with row2:
-        st.metric('Quanto Gastei', value = gastado)
-    with row3:
-        st.metric('Saldo', value = saldo)
+#     with row1:
+#         st.metric('Quanto Recebi', value = recebido)
+#     with row2:
+#         st.metric('Quanto Gastei', value = gastado)
+#     with row3:
+#         st.metric('Saldo', value = saldo)
 
-    st.dataframe(valor_total_por_mes(receitas, mesk_str[nm_mes])[0])
+#     st.dataframe(valor_total_por_mes(receitas, mesk_str[nm_mes])[0])
 
 
